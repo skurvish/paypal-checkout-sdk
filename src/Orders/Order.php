@@ -81,6 +81,14 @@ class Order implements Arrayable, Jsonable, ArrayAccess
     protected ?Payee $payee = null;
 
     /**
+     * The payment source definition.
+     * https://developer.paypal.com/docs/api/orders/v2/#definition-order_application_context.
+     *
+     * @var PaymentSource|null
+     */
+    protected ?PaymentSource $payment_source = null;
+
+    /**
      * creates a new order instance.
      */
     public function __construct(string $intent = CAPTURE)
@@ -186,13 +194,16 @@ class Order implements Arrayable, Jsonable, ArrayAccess
             throw InvalidOrderException::invalidPurchaseUnit();
         }
 
+        if (empty($this->payment_source)) {
+            throw InvalidOrderException::invalidPaymentSource();
+        }
         return [
             'intent' => $this->intent,
             'purchase_units' => array_map(
                 fn(PurchaseUnit $purchase_unit) => $purchase_unit->toArray(),
                 $this->purchase_units
             ),
-            'application_context' => $this->application_context ? $this->application_context->toArray() : null,
+            'payment_source' => $this->payment_source->toArray(),
         ];
     }
 
@@ -248,5 +259,26 @@ class Order implements Arrayable, Jsonable, ArrayAccess
     public function getPayee(): ?Payee
     {
         return $this->payee;
+    }
+
+    /**
+     * return's order payment_source.
+     * @return PaymentSource|null
+     */
+    public function getPaymentSource(): ?PaymentSource
+    {
+        return $this->payment_source;
+    }
+
+    /**
+     * set's order payment_source.
+     * @param  PaymentSource  $payment_source
+     * @return Order
+     */
+    public function setPaymentSource(PaymentSource $payment_source): self
+    {
+        $this->payment_source = $payment_source;
+
+        return $this;
     }
 }

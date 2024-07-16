@@ -32,6 +32,7 @@ class PurchaseUnit implements Arrayable, Jsonable
      */
     protected array $items = [];
 
+    protected ShippingDetail $shipping;
     /**
      * Create a new collection.
      */
@@ -81,6 +82,19 @@ class PurchaseUnit implements Arrayable, Jsonable
         return $this->items;
     }
 
+
+    public function setShipping(ShippingDetail $shipping): self
+    {
+        $this->shipping = $shipping;
+
+        return $this;
+    }
+
+    public function getShipping(): ShippingDetail
+    {
+        return $this->shipping;
+    }
+
     /**
      * return's the purchase unit amount breakdown.
      * @return AmountBreakdown
@@ -102,6 +116,7 @@ class PurchaseUnit implements Arrayable, Jsonable
                 fn(Item $item) => $item->toArray(),
                 $this->items
             ),
+            'shipping' => $this->shipping->toArray(),
         ];
     }
 }

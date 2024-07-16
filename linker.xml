@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!-- Usage - run  phing -f linker.xml -Dp=/var/www/html -->
+
+<project name="linker" default="link" basedir=".">
+    <property name="p" value="" />
+    <property name="URI.base" value="./"/>
+    <resolvepath propertyName="URI.base" file="${URI.base}"/>
+    <property name="rootPath" value="${URI.base}"/>
+    <import file="${rootPath}/link-utils.xml"/>
+
+    <target name="link" description="Build symbolic links to the git version">
+
+        <echo>Current Path: ${rootPath}</echo>
+        <echo>Target Path: ${p}</echo>
+
+        <!-- Delete folders, but don't worry if it fails as it could be a symbolic link -->
+        <phingcall target="deleteitem"><property name="filename" value="${p}/plugins/fabrik_form/paypal/vendor/phpjuice/paypal-checkout-sdk/src"/></phingcall>
+
+        <!-- Create System Links -->
+        <echo>Creating symlink from ${p}/plugins/fabrik_form/paypal to ${rootPath}</echo>
+        <phingcall target="symdir">
+            <property name="target" value="${rootPath}/src"/>
+            <property name="link" value="${p}/plugins/fabrik_form/paypal/vendor/phpjuice/paypal-checkout-sdk/src"/>
+        </phingcall>
+
+    </target>
+
+    <target name="unlink" description="Remove symbolic links and copy the files">
+        <echo>Current Path: ${rootPath}</echo>
+        <echo>Target Path: ${p}</echo>
+
+        <!-- Delete folders, but don't worry if it fails as it could be a symbolic link -->
+        <phingcall target="deleteitem"><property name="filename" value="${p}/plugins/fabrik_form/paypal/vendor/phpjuice/paypal-checkout-sdk/src"/></phingcall>
+
+        <!-- Copy the files -->
+        <phingcall target="copydir">
+            <property name="to" value="${p}/plugins/fabrik_form/paypal/vendor/phpjuice/paypal-checkout-sdk/src"/>
+            <property name="from" value="${rootPath}/src/"/>
+        </phingcall>
+    </target>
+
+</project>
