@@ -1,1 +1,18 @@
-
+{
+    "minimum-stability": "dev",
+    "repositories": [
+        {
+            "type": "vcs",
+            "url": "https://github.com/skurvish/paypal-checkout-sdk.git"
+        }
+    ],
+    "require": {
+        "brick/money": "^0.5.3",
+        "phpjuice/paypal-http-client": "^1.2.0",
+        "skurvish/paypal-checkout-sdk": "dev-main"
+    },
+    "replace": {
+        "guzzlehttp/guzzle" : "*",
+        "guzzlehttp/psr7" : "*"
+    }
+}
