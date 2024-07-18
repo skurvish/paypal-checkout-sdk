@@ -10,6 +10,12 @@ use Brick\Money\Money;
  */
 class AmountBreakdown extends Amount
 {
+
+    /**
+     * The item breakdow elements
+     **/
+    protected $breakDownItems = ['+item_total', '+shipping', '+handling', '+tax_total', '+insurance', '-shipping_discount', '-discount'];
+
     /**
      * The subtotal for all items. Required if the request includes purchase_units[].items[].unit_amount.
      * Must equal the sum of (items[].unit_amount * items[].quantity) for all items.
@@ -79,14 +85,14 @@ class AmountBreakdown extends Amount
      */
     public function toArray(): array
     {
-        $breakDownItems = ['item_total', 'shipping', 'handling', 'tax_total', 'insurance', 'shipping_discount', 'discount'];
 
         $data = [
             'currency_code' => $this->getCurrencyCode(),
             'value' => $this->getValue(),
         ];
 
-        foreach ($breakDownItems as $breakDownItem) {
+        foreach ($this->breakDownItems as $breakDownItem) {
+            $breakDownItem = ltrim($breakDownItem, '+-');
             if (empty($this->$breakDownItem)) {
                 continue;
             }
@@ -211,6 +217,26 @@ class AmountBreakdown extends Amount
     public function getShippingDiscount(): ?Money
     {
         return $this->shipping_discount;
+    }
+
+    public function getAmountBreakdownTotal(): ?Money
+    {
+        $total = Money::of(0,$this->getCurrencyCode());
+
+        foreach ($this->breakDownItems as $breakDownItem) {
+            $op = $breakDownItem[0];
+            $breakDownItem = ltrim($breakDownItem, '+-');
+            if (empty($this->$breakDownItem)) {
+                continue;
+            }
+            $getFn = 'get' . $breakDownItem;
+            if ($op == '+') {
+                $total->plus($this->$getFn());
+            } else {
+                $total->minus$this->$getFn();
+            }
+        }
+        return $total;
     }
 
 }
