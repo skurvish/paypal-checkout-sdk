@@ -9,11 +9,7 @@ use Fabrik\Plugin\Fabrik_form\Paypal\Helpers\Checkout\Orders\Address;
 use PayPal\Checkout\Concerns\CastsToJson;
 use PayPal\Checkout\Contracts\Arrayable;
 use PayPal\Checkout\Contracts\Jsonable;
-
-const SHIPPING = 'SHIPPING';
-const PICKUP_IN_PERSON = 'PICKUP_IN_PERSON';
-const PICKUP_IN_STORE = 'PICKUP_IN_STORE';
-const PICKUP_FROM_PERSON = 'PICKUP_FROM_PERSON';
+use PayPal\Checkout\Enums\ShippingType;
 
 class ShippingDetail implements Arrayable, Jsonable
 {
@@ -32,7 +28,7 @@ class ShippingDetail implements Arrayable, Jsonable
      *
      * @var string required
      */
-    protected string $type = SHIPPING;
+    protected string $type = ShippingType::SHIPPING;
 
     /**
      * An array of shipping options that the payee or merchant offers to the payer to ship or pick up their items.
@@ -67,8 +63,7 @@ class ShippingDetail implements Arrayable, Jsonable
 
     public function setShippingType(string $type): self
     {
-        $validOptions = [SHIPPING, PICKUP_IN_PERSON, PICKUP_IN_STORE, PICKUP_FROM_PERSON];
-        if (!in_array($type, $validOptions)) {
+        if ($type instanceof ShippingType === false)) {
             throw new InvalidShippingTypeException();
         }
         $this->type = $type;
@@ -116,5 +111,24 @@ class ShippingDetail implements Arrayable, Jsonable
             'name' => $this->name,
             'address' => $this->address->toArray(),
         ];
+    }
+    /**
+     * Validate the instance.
+     * @return array
+     */
+    public function validate(): string
+    {
+
+        $messages = [];
+
+        if ($this->type instanceof ShippingType === false) {
+            $messages[] = "Invalid shipping type: $this->type";
+        }
+
+        if ($this->address && ($msg = $this->address->validate())) {
+             $messages = array_merge($messages, $msg);
+        }
+
+        return $messages;
     }
 }
