@@ -5,23 +5,14 @@ namespace PayPal\Checkout\Orders;
 use PayPal\Checkout\Concerns\CastsToJson;
 use PayPal\Checkout\Contracts\Arrayable;
 use PayPal\Checkout\Contracts\Jsonable;
+use PayPal\Checkout\Enums\LandingPage;
+use PayPal\Checkout\Enums\PaymentMethod;
+use PayPal\Checkout\Enums\ShippingPreference;
+use PayPal\Checkout\Enums\UserAction;
 use PayPal\Checkout\Exceptions\InvalidLandingPageException;
 use PayPal\Checkout\Exceptions\InvalidShippingPreferenceException;
 use PayPal\Checkout\Exceptions\InvalidUserActionException;
 
-// landing_page
-const LOGIN = 'LOGIN';
-const BILLING = 'BILLING';
-const NO_PREFERENCE = 'NO_PREFERENCE';
-
-// shipping_preference
-const GET_FROM_FILE = 'GET_FROM_FILE';
-const NO_SHIPPING = 'NO_SHIPPING';
-const SET_PROVIDED_ADDRESS = 'SET_PROVIDED_ADDRESS';
-
-// user_action
-const ACTION_CONTINUE = 'CONTINUE';
-const ACTION_PAY_NOW = 'PAY_NOW';
 
 /**
  * https://developer.paypal.com/docs/api/orders/v2/#definition-order_application_context.
@@ -61,7 +52,7 @@ class ApplicationContext implements Arrayable, Jsonable
      *
      * @var string
      */
-    protected string $landing_page = NO_PREFERENCE;
+    protected string $landing_page = LandingPage::NO_PREFERENCE;
 
     /**
      * The shipping preferences. The possible values are:
@@ -72,7 +63,7 @@ class ApplicationContext implements Arrayable, Jsonable
      *
      * @var string
      */
-    protected string $shipping_preference = NO_SHIPPING;
+    protected string $shipping_preference = ShippingPreference::NO_SHIPPING;
 
     /**
      * The URL where the customer is redirected after the customer approves the payment.
@@ -103,7 +94,7 @@ class ApplicationContext implements Arrayable, Jsonable
      *
      * @var string
      */
-    protected string $user_action = ACTION_CONTINUE;
+    protected string $user_action = UserAction::ACTION_CONTINUE;
 
     /**
      * @param  string|null  $brand_name
@@ -116,8 +107,8 @@ class ApplicationContext implements Arrayable, Jsonable
     public function __construct(
         ?string $brand_name = null,
         string $locale = 'en-US',
-        string $landing_page = NO_PREFERENCE,
-        string $shipping_preference = NO_SHIPPING,
+        string $landing_page = LandingPage::NO_PREFERENCE,
+        string $shipping_preference = ShippingPreference::NO_SHIPPING,
         ?string $return_url = null,
         ?string $cancel_url = null
     ) {
@@ -132,8 +123,8 @@ class ApplicationContext implements Arrayable, Jsonable
     public static function create(
         ?string $brand_name = null,
         string $locale = 'en-US',
-        string $landing_page = NO_PREFERENCE,
-        string $shipping_preference = NO_SHIPPING,
+        string $landing_page = LandingPage::NO_PREFERENCE,
+        string $shipping_preference = ShippingPreference::NO_SHIPPING,
         ?string $return_url = null,
         ?string $cancel_url = null
     ): ApplicationContext {
@@ -201,8 +192,7 @@ class ApplicationContext implements Arrayable, Jsonable
 
     public function setShippingPreference(string $shipping_preference): self
     {
-        $validOptions = [GET_FROM_FILE, NO_SHIPPING, SET_PROVIDED_ADDRESS];
-        if (!in_array($shipping_preference, $validOptions)) {
+        if ($shipping_preference instanceof ShippingPreference === false) {
             throw new InvalidShippingPreferenceException();
         }
 
@@ -218,8 +208,7 @@ class ApplicationContext implements Arrayable, Jsonable
 
     public function setLandingPage(string $landing_page): self
     {
-        $validOptions = [LOGIN, BILLING, NO_PREFERENCE];
-        if (!in_array($landing_page, $validOptions)) {
+        if ($landing_page instanceof LandingPage === false) {
             throw new InvalidLandingPageException();
         }
 
@@ -235,8 +224,7 @@ class ApplicationContext implements Arrayable, Jsonable
 
     public function setUserAction(string $user_action): self
     {
-        $validOptions = [ACTION_CONTINUE, ACTION_PAY_NOW];
-        if (!in_array($user_action, $validOptions)) {
+        if ($user_actioninstanceof UserAction === false) {
             throw new InvalidUserActionException();
         }
         $this->user_action = $user_action;
