@@ -2,6 +2,9 @@
 
 namespace Fabrik\Plugin\Fabrik_form\Paypal\Helpers\Checkout\Orders;
 
+use League\ISO3166\ISO3166;
+use League\ISO3166\Exception\OutOfBoundsException;
+
 /**
  * Default address implementation.
  */
@@ -118,6 +121,8 @@ class Address
      */
     public function setCountryCode($country_code) 
     {
+        // this call will throw an exception if the CC is invalid
+        ISO3166->alpha2($country_code);
         $this->country_code = $country_code;
     }
 
@@ -204,5 +209,22 @@ class Address
     public function toArray(): array
     {
         return array_filter(get_object_vars($this));
+    }
+    /**
+     * Validate the instance.
+     * @return array
+     */
+    public function validate(): string
+    {
+
+        $messages = [];
+
+        try {
+            ISO3166->alpha2($this->country_code);
+        } catch (OutOfBoundsException $e) {
+            $messages[] = $e->getMessage();
+        }
+
+        return $messages;
     }
 }
