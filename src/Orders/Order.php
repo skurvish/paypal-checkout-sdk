@@ -6,11 +6,10 @@ use ArrayAccess;
 use PayPal\Checkout\Concerns\CastsToJson;
 use PayPal\Checkout\Contracts\Arrayable;
 use PayPal\Checkout\Contracts\Jsonable;
+use PayPal\Checkout\Enums\OrderIntent;
 use PayPal\Checkout\Exceptions\InvalidOrderException;
 use PayPal\Checkout\Exceptions\InvalidOrderIntentException;
 
-const CAPTURE = 'CAPTURE';
-const AUTHORIZE = 'AUTHORIZE';
 
 /**
  * https://developer.paypal.com/docs/api/orders/v2/#definition-order.
@@ -38,7 +37,7 @@ class Order implements Arrayable, Jsonable, ArrayAccess
      *
      * @var string
      */
-    protected string $intent;
+    protected OrderIntent $intent;
 
     /**
      * An array of purchase units. At present only 1 purchase_unit is supported.
@@ -145,7 +144,7 @@ class Order implements Arrayable, Jsonable, ArrayAccess
      * return's order intent.
      * @return string
      */
-    public function getIntent(): string
+    public function getIntent(): OrderIntent
     {
         return $this->intent;
     }
@@ -157,7 +156,7 @@ class Order implements Arrayable, Jsonable, ArrayAccess
      */
     public function setIntent(string $intent): self
     {
-        if (!in_array($intent, [CAPTURE, AUTHORIZE])) {
+        if ($intent instanceof OrderIntent === false) {
             throw new InvalidOrderIntentException();
         }
 
