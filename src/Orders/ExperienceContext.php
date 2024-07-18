@@ -5,27 +5,14 @@ namespace Fabrik\Plugin\Fabrik_form\Paypal\Helpers\Checkout\Orders;
 use PayPal\Checkout\Concerns\CastsToJson;
 use PayPal\Checkout\Contracts\Arrayable;
 use PayPal\Checkout\Contracts\Jsonable;
+use PayPal\Checkout\Enums\LandingPage;
+use PayPal\Checkout\Enums\PaymentMethod;
+use PayPal\Checkout\Enums\ShippingPreference;
+use PayPal\Checkout\Enums\UserAction;
 use PayPal\Checkout\Orders\ApplicationContext;
 
 use Fabrik\Plugin\Fabrik_form\Paypal\Helpers\Checkout\Exceptions\InvalidPaymentMethodPreferenceException;
 
-// landing_page
-const LOGIN = 'LOGIN';
-const BILLING = 'BILLING';
-const NO_PREFERENCE = 'NO_PREFERENCE';
-
-// shipping_preference
-const GET_FROM_FILE = 'GET_FROM_FILE';
-const NO_SHIPPING = 'NO_SHIPPING';
-const SET_PROVIDED_ADDRESS = 'SET_PROVIDED_ADDRESS';
-
-// user_action
-const ACTION_CONTINUE = 'CONTINUE';
-const ACTION_PAY_NOW = 'PAY_NOW';
-
-// payment_method
-const METHOD_UNRESTRICTED = 'UNRESTRICTED';
-const METHOD_IMMEDIATE_PAYMENT_REQUIRED = 'IMMEDIATE_PAYMENT_REQUIRED';
 
 class ExperienceContext extends ApplicationContext implements Arrayable, Jsonable
 {
@@ -43,11 +30,11 @@ class ExperienceContext extends ApplicationContext implements Arrayable, Jsonabl
     public function __construct(
         ?string $brand_name = null,
         string $locale = 'en-US',
-        string $landing_page = NO_PREFERENCE,
-        string $shipping_preference = NO_SHIPPING,
+        string $landing_page = LandingPage::NO_PREFERENCE,
+        string $shipping_preference = ShippingPreference::NO_SHIPPING,
         ?string $return_url = null,
         ?string $cancel_url = null,
-        ?string $payment_method_preference = METHOD_IMMEDIATE_PAYMENT_REQUIRED   // new argument
+        ?string $payment_method_preference = PaymentMethod::METHOD_IMMEDIATE_PAYMENT_REQUIRED   // new argument
         ) {
         $args = func_get_args(); // Get all passed arguments
         
@@ -66,11 +53,11 @@ class ExperienceContext extends ApplicationContext implements Arrayable, Jsonabl
     public static function create(
         ?string $brand_name = null,
         string $locale = 'en-US',
-        string $landing_page = NO_PREFERENCE,
-        string $shipping_preference = NO_SHIPPING,
+        string $landing_page = LandingPage::NO_PREFERENCE,
+        string $shipping_preference = ShippingPreference::NO_SHIPPING,
         ?string $return_url = null,
         ?string $cancel_url = null,
-        ?string $payment_method_preference = METHOD_IMMEDIATE_PAYMENT_REQUIRED   // new argument
+        ?string $payment_method_preference = PaymentMethod::METHOD_IMMEDIATE_PAYMENT_REQUIRED   // new argument
     ): ExperienceContext {
         return new self(
             $brand_name,
@@ -105,8 +92,7 @@ class ExperienceContext extends ApplicationContext implements Arrayable, Jsonabl
 
     public function setPaymentMethodPreference(string $payment_method_preference): self
     {
-        $validOptions = [METHOD_UNRESTRICTED, METHOD_IMMEDIATE_PAYMENT_REQUIRED];
-        if (!in_array($payment_method_preference, $validOptions)) {
+        if ($payment_method_preference instanceof PaymentMethod === false) {
             throw new InvalidPaymentMethodPreferenceException();
         }
         $this->payment_method_preference = $payment_method_preference;
