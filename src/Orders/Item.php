@@ -7,10 +7,9 @@ use PayPal\Checkout\Concerns\CastsToJson;
 use PayPal\Checkout\Contracts\Amount as AmountContract;
 use PayPal\Checkout\Contracts\Arrayable;
 use PayPal\Checkout\Contracts\Jsonable;
+use PayPal\Checkout\Enums\ItemCategory;
 use PayPal\Checkout\Exceptions\InvalidItemCategoryException;
 
-const DIGITAL_GOODS = 'DIGITAL_GOODS';
-const PHYSICAL_GOODS = 'PHYSICAL_GOODS';
 
 /**
  * https://developer.paypal.com/docs/api/orders/v2/#definition-item.
@@ -72,7 +71,7 @@ class Item implements Arrayable, Jsonable
      *
      * @var string
      */
-    protected string $category = DIGITAL_GOODS;
+    protected string $category = ItemCategory::DIGITAL_GOODS;
 
     /**
      * create a new item instance.
@@ -212,8 +211,7 @@ class Item implements Arrayable, Jsonable
      */
     public function setCategory(string $category): self
     {
-        $validOptions = [DIGITAL_GOODS, PHYSICAL_GOODS];
-        if (!in_array($category, $validOptions)) {
+        if ($category instanceof ItemCategory === false) {
             throw new InvalidItemCategoryException();
         }
         $this->category = $category;
