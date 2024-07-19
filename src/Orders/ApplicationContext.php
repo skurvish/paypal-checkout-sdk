@@ -190,7 +190,7 @@ class ApplicationContext implements Arrayable, Jsonable
         return $this->shipping_preference;
     }
 
-    public function setShippingPreference(string $shipping_preference): self
+    public function setShippingPreference(ShippingPreference $shipping_preference): self
     {
         if ($shipping_preference instanceof ShippingPreference === false) {
             throw new InvalidShippingPreferenceException();
@@ -206,7 +206,7 @@ class ApplicationContext implements Arrayable, Jsonable
         return $this->landing_page;
     }
 
-    public function setLandingPage(string $landing_page): self
+    public function setLandingPage(LandingPage $landing_page): self
     {
         if ($landing_page instanceof LandingPage === false) {
             throw new InvalidLandingPageException();
@@ -222,9 +222,9 @@ class ApplicationContext implements Arrayable, Jsonable
         return $this->user_action;
     }
 
-    public function setUserAction(string $user_action): self
+    public function setUserAction(UserAction $user_action): self
     {
-        if ($user_actioninstanceof UserAction === false) {
+        if ($user_action instanceof UserAction === false) {
             throw new InvalidUserActionException();
         }
         $this->user_action = $user_action;
