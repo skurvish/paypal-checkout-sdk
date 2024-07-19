@@ -15,13 +15,13 @@
         <echo>Target Path: ${p}</echo>
 
         <!-- Delete folders, but don't worry if it fails as it could be a symbolic link -->
-        <phingcall target="deleteitem"><property name="filename" value="${p}/plugins/fabrik_form/paypal/vendor/phpjuice/paypal-checkout-sdk/src"/></phingcall>
+        <phingcall target="deleteitem"><property name="filename" value="${p}/plugins/fabrik_form/paypal/vendor/skurvish/paypal-checkout-sdk/src"/></phingcall>
 
         <!-- Create System Links -->
         <echo>Creating symlink from ${p}/plugins/fabrik_form/paypal to ${rootPath}</echo>
         <phingcall target="symdir">
             <property name="target" value="${rootPath}/src"/>
-            <property name="link" value="${p}/plugins/fabrik_form/paypal/vendor/phpjuice/paypal-checkout-sdk/src"/>
+            <property name="link" value="${p}/plugins/fabrik_form/paypal/vendor/skurvish/paypal-checkout-sdk/src"/>
         </phingcall>
 
     </target>
@@ -31,11 +31,11 @@
         <echo>Target Path: ${p}</echo>
 
         <!-- Delete folders, but don't worry if it fails as it could be a symbolic link -->
-        <phingcall target="deleteitem"><property name="filename" value="${p}/plugins/fabrik_form/paypal/vendor/phpjuice/paypal-checkout-sdk/src"/></phingcall>
+        <phingcall target="deleteitem"><property name="filename" value="${p}/plugins/fabrik_form/paypal/vendor/skurvish/paypal-checkout-sdk/src"/></phingcall>
 
         <!-- Copy the files -->
         <phingcall target="copydir">
-            <property name="to" value="${p}/plugins/fabrik_form/paypal/vendor/phpjuice/paypal-checkout-sdk/src"/>
+            <property name="to" value="${p}/plugins/fabrik_form/paypal/vendor/skurvish/paypal-checkout-sdk/src"/>
             <property name="from" value="${rootPath}/src/"/>
         </phingcall>
     </target>

@@ -1,12 +1,11 @@
 <?php
 
-namespace Fabrik\Plugin\Fabrik_form\Paypal\Helpers\Checkout\Orders;
-
-use Fabrik\Plugin\Fabrik_form\Paypal\Helpers\Checkout\Orders\ExperienceContext;
+namespace PayPal\Checkout\Orders;
 
 use PayPal\Checkout\Concerns\CastsToJson;
 use PayPal\Checkout\Contracts\Arrayable;
 use PayPal\Checkout\Contracts\Jsonable;
+use PayPal\Checkout\Orders\ExperienceContext;
 
 class PayPalPaymentSource implements Arrayable, Jsonable
 {

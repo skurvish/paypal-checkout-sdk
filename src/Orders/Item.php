@@ -71,7 +71,7 @@ class Item implements Arrayable, Jsonable
      *
      * @var string
      */
-    protected string $category = ItemCategory::DIGITAL_GOODS;
+    protected ItemCategory $category = ItemCategory::DIGITAL_GOODS;
 
     /**
      * create a new item instance.
@@ -201,7 +201,7 @@ class Item implements Arrayable, Jsonable
     /**
      * return's item category.
      */
-    public function getCategory(): ?string
+    public function getCategory(): ?ItemCategory
     {
         return $this->category;
     }
@@ -209,7 +209,7 @@ class Item implements Arrayable, Jsonable
     /**
      * set's item category.
      */
-    public function setCategory(string $category): self
+    public function setCategory(ItemCategory $category): self
     {
         if ($category instanceof ItemCategory === false) {
             throw new InvalidItemCategoryException();

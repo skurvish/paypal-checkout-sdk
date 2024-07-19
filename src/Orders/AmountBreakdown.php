@@ -233,7 +233,7 @@ class AmountBreakdown extends Amount
             if ($op == '+') {
                 $total->plus($this->$getFn());
             } else {
-                $total->minus$this->$getFn();
+                $total->minus($this->$getFn());
             }
         }
         return $total;

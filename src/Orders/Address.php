@@ -1,6 +1,6 @@
 <?php
 
-namespace Fabrik\Plugin\Fabrik_form\Paypal\Helpers\Checkout\Orders;
+namespace PayPal\Checkout\Orders;
 
 use League\ISO3166\ISO3166;
 use League\ISO3166\Exception\OutOfBoundsException;

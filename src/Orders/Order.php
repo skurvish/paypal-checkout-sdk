@@ -10,7 +10,6 @@ use PayPal\Checkout\Enums\OrderIntent;
 use PayPal\Checkout\Exceptions\InvalidOrderException;
 use PayPal\Checkout\Exceptions\InvalidOrderIntentException;
 
-
 /**
  * https://developer.paypal.com/docs/api/orders/v2/#definition-order.
  */

@@ -3,13 +3,13 @@
 /** 
  * The name and address of the person to whom to ship the items.
  **/
-namespace Fabrik\Plugin\Fabrik_form\Paypal\Helpers\Checkout\Orders;
+namespace PayPal\Checkout\Orders;
 
-use Fabrik\Plugin\Fabrik_form\Paypal\Helpers\Checkout\Orders\Address;
 use PayPal\Checkout\Concerns\CastsToJson;
 use PayPal\Checkout\Contracts\Arrayable;
 use PayPal\Checkout\Contracts\Jsonable;
 use PayPal\Checkout\Enums\ShippingType;
+use PayPal\Checkout\Orders\Address;
 
 class ShippingDetail implements Arrayable, Jsonable
 {
@@ -26,9 +26,9 @@ class ShippingDetail implements Arrayable, Jsonable
      * A classification for the method of purchase fulfillment (e.g shipping, in-store pickup, etc). 
      * Either type or options may be present, but not both.
      *
-     * @var string required
+     * @var ShippingType required
      */
-    protected string $type = ShippingType::SHIPPING;
+    protected ShippingType $type = ShippingType::SHIPPING;
 
     /**
      * An array of shipping options that the payee or merchant offers to the payer to ship or pick up their items.
@@ -54,16 +54,16 @@ class ShippingDetail implements Arrayable, Jsonable
     /**
      * creates a new order instance.
      */
-    public function __construct(string $type = null)
+    public function __construct(ShippingType $type = null)
     {
         if (!empty($type)) {
             $this->type = $type;
         }
     }
 
-    public function setShippingType(string $type): self
+    public function setShippingType(ShippingType $type): self
     {
-        if ($type instanceof ShippingType === false)) {
+        if ($type instanceof ShippingType === false) {
             throw new InvalidShippingTypeException();
         }
         $this->type = $type;
@@ -71,7 +71,7 @@ class ShippingDetail implements Arrayable, Jsonable
         return $this;
     }
 
-    public function getShippingType(): string
+    public function getShippingType(): ShippingType
     {
         return $this->type;
     }
