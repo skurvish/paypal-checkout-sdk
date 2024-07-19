@@ -89,7 +89,7 @@ class Order implements Arrayable, Jsonable, ArrayAccess
     /**
      * creates a new order instance.
      */
-    public function __construct(string $intent = CAPTURE)
+    public function __construct(OrderIntent $intent = OrderIntent::CAPTURE)
     {
         $this->setIntent($intent);
         $this->application_context = new ApplicationContext();
@@ -153,7 +153,7 @@ class Order implements Arrayable, Jsonable, ArrayAccess
      * @param  string  $intent
      * @return Order
      */
-    public function setIntent(string $intent): self
+    public function setIntent(OrderIntent $intent): self
     {
         if ($intent instanceof OrderIntent === false) {
             throw new InvalidOrderIntentException();
