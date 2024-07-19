@@ -12,7 +12,7 @@ class AmountBreakdown extends Amount
 {
 
     /**
-     * The item breakdow elements
+     * The item breakdown elements, also how they affect the total cost
      **/
     protected $breakDownItems = ['+item_total', '+shipping', '+handling', '+tax_total', '+insurance', '-shipping_discount', '-discount'];
 
