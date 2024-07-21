@@ -50,9 +50,9 @@ class ApplicationContext implements Arrayable, Jsonable
      * - NO_PREFERENCE: A decimal fraction for currencies like TND
      *   that are subdivided into thousandths.
      *
-     * @var string
+     * @var LandingPage
      */
-    protected string $landing_page = LandingPage::NO_PREFERENCE;
+    protected LandingPage $landing_page = LandingPage::NO_PREFERENCE;
 
     /**
      * The shipping preferences. The possible values are:
@@ -61,9 +61,9 @@ class ApplicationContext implements Arrayable, Jsonable
      *  - SET_PROVIDED_ADDRESS: Use the merchant-provided address.
      *    The customer cannot change this address on the PayPal site.
      *
-     * @var string
+     * @var ShippingPreference
      */
-    protected string $shipping_preference = ShippingPreference::NO_SHIPPING;
+    protected ShippingPreference $shipping_preference = ShippingPreference::NO_SHIPPING;
 
     /**
      * The URL where the customer is redirected after the customer approves the payment.
@@ -94,21 +94,21 @@ class ApplicationContext implements Arrayable, Jsonable
      *
      * @var string
      */
-    protected string $user_action = UserAction::ACTION_CONTINUE;
+    protected UserAction $user_action = UserAction::CONTINUE;
 
     /**
      * @param  string|null  $brand_name
      * @param  string  $locale
-     * @param  string  $landing_page
-     * @param  string  $shipping_preference
+     * @param  LandingPage  $landing_page
+     * @param  ShippingPreference  $shipping_preference
      * @param  string|null  $return_url
      * @param  string|null  $cancel_url
      */
     public function __construct(
         ?string $brand_name = null,
         string $locale = 'en-US',
-        string $landing_page = LandingPage::NO_PREFERENCE,
-        string $shipping_preference = ShippingPreference::NO_SHIPPING,
+        LandingPage $landing_page = LandingPage::NO_PREFERENCE,
+        ShippingPreference $shipping_preference = ShippingPreference::NO_SHIPPING,
         ?string $return_url = null,
         ?string $cancel_url = null
     ) {
@@ -123,8 +123,8 @@ class ApplicationContext implements Arrayable, Jsonable
     public static function create(
         ?string $brand_name = null,
         string $locale = 'en-US',
-        string $landing_page = LandingPage::NO_PREFERENCE,
-        string $shipping_preference = ShippingPreference::NO_SHIPPING,
+        LandingPage $landing_page = LandingPage::NO_PREFERENCE,
+        ShippingPreference $shipping_preference = ShippingPreference::NO_SHIPPING,
         ?string $return_url = null,
         ?string $cancel_url = null
     ): ApplicationContext {
@@ -146,9 +146,9 @@ class ApplicationContext implements Arrayable, Jsonable
         $arrayable = [
             'brand_name' => $this->getBrandName() ?? null,
             'locale' => $this->getLocale() ?? null,
-            'shipping_preference' => $this->getShippingPreference() ?? null,
-            'landing_page' => $this->getLandingPage() ?? null,
-            'user_action' => $this->getUserAction() ?? null,
+            'shipping_preference' => $this->getShippingPreference()?->value ?? null,
+            'landing_page' => $this->getLandingPage()?->value ?? null,
+            'user_action' => $this->getUserAction()?->value ?? null,
             'return_url' => $this->getReturnUrl() ?? null,
             'cancel_url' => $this->getCancelUrl() ?? null,
         ];
@@ -185,7 +185,7 @@ class ApplicationContext implements Arrayable, Jsonable
         return $this;
     }
 
-    public function getShippingPreference(): string
+    public function getShippingPreference(): ShippingPreference
     {
         return $this->shipping_preference;
     }
@@ -201,7 +201,7 @@ class ApplicationContext implements Arrayable, Jsonable
         return $this;
     }
 
-    public function getLandingPage(): string
+    public function getLandingPage(): LandingPage
     {
         return $this->landing_page;
     }
@@ -217,7 +217,7 @@ class ApplicationContext implements Arrayable, Jsonable
         return $this;
     }
 
-    public function getUserAction(): string
+    public function getUserAction(): UserAction
     {
         return $this->user_action;
     }
