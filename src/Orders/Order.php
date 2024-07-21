@@ -196,7 +196,7 @@ class Order implements Arrayable, Jsonable, ArrayAccess
             throw InvalidOrderException::invalidPaymentSource();
         }
         return [
-            'intent' => $this->intent,
+            'intent' => $this->intent->value,
             'purchase_units' => array_map(
                 fn(PurchaseUnit $purchase_unit) => $purchase_unit->toArray(),
                 $this->purchase_units
