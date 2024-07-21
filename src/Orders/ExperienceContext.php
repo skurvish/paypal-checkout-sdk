@@ -22,7 +22,7 @@ class ExperienceContext extends ApplicationContext implements Arrayable, Jsonabl
      *
      * @var PaymentMethod|null
      */
-    protected ?PaymentMethod $payment_method_preference = METHOD_IMMEDIATE_PAYMENT_REQUIRED;
+    protected ?PaymentMethod $payment_method_preference = PaymentMethod::IMMEDIATE_PAYMENT_REQUIRED;
 
 
     public function __construct(
@@ -32,7 +32,7 @@ class ExperienceContext extends ApplicationContext implements Arrayable, Jsonabl
         ShippingPreference $shipping_preference = ShippingPreference::NO_SHIPPING,
         ?string $return_url = null,
         ?string $cancel_url = null,
-        ?PaymentMethod $payment_method_preference = PaymentMethod::METHOD_IMMEDIATE_PAYMENT_REQUIRED   // new argument
+        ?PaymentMethod $payment_method_preference = PaymentMethod::IMMEDIATE_PAYMENT_REQUIRED   // new argument
         ) {
         $args = func_get_args(); // Get all passed arguments
         
@@ -55,7 +55,7 @@ class ExperienceContext extends ApplicationContext implements Arrayable, Jsonabl
         ShippingPreference $shipping_preference = ShippingPreference::NO_SHIPPING,
         ?string $return_url = null,
         ?string $cancel_url = null,
-        ?PaymentMethod $payment_method_preference = PaymentMethod::METHOD_IMMEDIATE_PAYMENT_REQUIRED   // new argument
+        ?PaymentMethod $payment_method_preference = PaymentMethod::IMMEDIATE_PAYMENT_REQUIRED   // new argument
     ): ExperienceContext {
         return new self(
             $brand_name,
@@ -73,14 +73,14 @@ class ExperienceContext extends ApplicationContext implements Arrayable, Jsonabl
      */
     public function toArray(): array
     {
-        $arrayable = parent::toArray() + ['payment_method_preference' => $this->getPaymentMethodPreference()];
+        $data = array_filter(parent::toArray());
+        $paymentMethodPreference = $this->getPaymentMethodPreference();
 
-        return array_filter(
-            $arrayable,
-            function ($item) {
-                return null !== $item;
-            }
-        );
+        if ($paymentMethodPreference) {
+            $data['payment_method_preference'] = $paymentMethodPreference->value;
+        }
+
+        return $data;
     }
 
     public function getPaymentMethodPreference(): PaymentMethod
