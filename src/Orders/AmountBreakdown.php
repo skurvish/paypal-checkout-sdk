@@ -8,13 +8,8 @@ use Brick\Money\Money;
 /**
  * https://developer.paypal.com/docs/api/orders/v2/#definition-Amount_breakdown.
  */
-class AmountBreakdown extends Amount
+class AmountBreakdown 
 {
-
-    /**
-     * The item breakdown elements, also how they affect the total cost
-     **/
-    protected $breakDownItems = ['+item_total', '+shipping', '+handling', '+tax_total', '+insurance', '-shipping_discount', '-discount'];
 
     /**
      * The subtotal for all items. Required if the request includes purchase_units[].items[].unit_amount.
@@ -57,26 +52,14 @@ class AmountBreakdown extends Amount
     protected ?Money $shipping_discount = null;
 
     /**
-     * create a new AmountBreakdown instance.
+     * create a new amount breakdown instance.
      * @param  string  $value
      * @param  string  $currency_code
      * @throws UnknownCurrencyException
      */
     public function __construct(string $value, string $currency_code = 'USD')
     {
-        parent::__construct($value, $currency_code);
         $this->item_total = Money::of($value, $currency_code);
-    }
-
-    /**
-     * @param  string  $value
-     * @param  string  $currency_code
-     * @return AmountBreakdown
-     * @throws UnknownCurrencyException
-     */
-    public static function of(string $value, string $currency_code = 'USD'): self
-    {
-        return new self($value, $currency_code);
     }
 
     /**
@@ -85,18 +68,23 @@ class AmountBreakdown extends Amount
      */
     public function toArray(): array
     {
-
+        /**
+         * The item breakdown elements, also how they affect the total cost
+         **/
+        $breakDownItems = ['+item_total', '+shipping', '+handling', '+tax_total', '+insurance', '-shipping_discount', '-discount'];
+/*
         $data = [
-            'currency_code' => $this->getCurrencyCode(),
-            'value' => $this->getValue(),
+            'currency_code' => $this->item_total->getCurrency()->getCurrencyCode(),
+            'value' => $this->item_total->getAmount(),
         ];
-
-        foreach ($this->breakDownItems as $breakDownItem) {
+*/
+        $data = [];
+        foreach ($breakDownItems as $breakDownItem) {
             $breakDownItem = ltrim($breakDownItem, '+-');
             if (empty($this->$breakDownItem)) {
                 continue;
             }
-            $data['breakdown'][$breakDownItem] = [
+            $data[$breakDownItem] = [
                 'currency_code' => $this->$breakDownItem->getCurrency()->getCurrencyCode(),
                 'value' => (string) $this->$breakDownItem->getAmount(),
             ];
