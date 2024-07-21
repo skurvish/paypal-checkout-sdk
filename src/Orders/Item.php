@@ -3,7 +3,7 @@
 namespace PayPal\Checkout\Orders;
 
 use Brick\Money\Exception\UnknownCurrencyException;
-use PayPal\Checkout\Concerns\CastsToJson;
+//use PayPal\Checkout\Concerns\CastsToJson;
 use PayPal\Checkout\Contracts\Amount as AmountContract;
 use PayPal\Checkout\Contracts\Arrayable;
 use PayPal\Checkout\Contracts\Jsonable;
@@ -14,9 +14,9 @@ use PayPal\Checkout\Exceptions\InvalidItemCategoryException;
 /**
  * https://developer.paypal.com/docs/api/orders/v2/#definition-item.
  */
-class Item implements Arrayable, Jsonable
+class Item implements Arrayable//, Jsonable
 {
-    use CastsToJson;
+//    use CastsToJson;
 
     /**
      * The item name or title.
@@ -81,7 +81,7 @@ class Item implements Arrayable, Jsonable
         $this->name = $name;
         $this->unit_amount = $amount;
         $this->quantity = $quantity;
-        $this->sku = $this->setSku(uniqid());
+        $this->sku = uniqid();
     }
 
     /**
@@ -115,11 +115,9 @@ class Item implements Arrayable, Jsonable
     /**
      * set's item sku.
      */
-    public function setSku(string $sku): self
+    public function setSku(string $sku) 
     {
         $this->sku = $sku;
-
-        return $this;
     }
 
     /**
@@ -135,13 +133,35 @@ class Item implements Arrayable, Jsonable
      */
     public function toArray(): array
     {
-        return [
+        $data = [
             'name' => $this->getName(),
             'unit_amount' => $this->unit_amount->toArray(),
-            'quantity' => $this->getQuantity(),
-            'description' => $this->getDescription(),
-            'category' => $this->getCategory(),
+            'quantity' => $this->getQuantity()
         ];
+        $optionalItems = ['description' => 'string', 'sku' => 'string', 'url' => 'string', 'image_url' => 'string',
+                            'category' => 'enum',
+                            'tax' => 'money',
+                            'upc' => 'upc'
+        ];
+        foreach ($optionalItems as $optionalItem => $type) {
+            if (empty($this->$optionalItem)) {
+                continue;
+            }
+            switch ($type) {
+                case 'string':
+                    $data[$optionalItem] = $this->$optionalItem;
+                    break;
+                case 'enum':
+                    $data[$optionalItem] = $this->$optionalItem->value;
+                    break;
+                case 'money':
+                    $data[$optionalItem] = $this->$optionalItem->getAmount();
+                    break;
+                case 'upc':
+                // TBD
+            }
+        }
+        return $data;
     }
 
     /**
