@@ -7,6 +7,6 @@
 namespace PayPal\Checkout\Enums;
 
 enum UserAction: string {
-	case ACTION_CONTINUE = 'ACTION_CONTINUE';
-	case ACTION_PAY_NOW = 'ACTION_PAY_NOW';
+	case CONTINUE = 'CONTINUE';
+	case PAY_NOW = 'PAY_NOW';
 }
