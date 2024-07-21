@@ -6,6 +6,7 @@ use Brick\Money\Exception\UnknownCurrencyException;
 use Brick\Money\Money;
 use PayPal\Checkout\Concerns\CastsToJson;
 use PayPal\Checkout\Contracts\Amount as AmountContract;
+use PayPal\Checkout\Orders\AmountBreakdown;
 
 /**
  * https://developer.paypal.com/docs/api/orders/v2/#definition-Amount_breakdown.
@@ -20,6 +21,11 @@ class Amount implements AmountContract
      * @var Money
      */
     protected Money $money;
+
+    /**
+     *  The breakdown of the amount. Breakdown provides details such as total item amount, total tax amount, shipping, handling, insurance, and discounts, if any.
+    **/
+    protected ?AmountBreakdown $breakdown = null;
 
     /**
      * create a new amount instance.
@@ -49,10 +55,16 @@ class Amount implements AmountContract
      */
     public function toArray(): array
     {
-        return [
+        $return = [
             'currency_code' => $this->getCurrencyCode(),
             'value' => $this->getValue(),
         ];
+
+        if ($this->breakdown) {
+            $return['breakdown'] = $this->breakdown->toArray();
+        }
+
+        return $return;
     }
 
     /**
@@ -69,5 +81,17 @@ class Amount implements AmountContract
     public function getValue(): string
     {
         return (string) $this->money->getAmount();
+    }
+    
+    public function setAmountBreakdown(AmountBreakdown $breakdown): self
+    {
+        $this->breakdown = $breakdown;
+
+        return $this;
+    }
+
+    public function getAmountBreakdown(): AmountBreakdown
+    {
+        return $this->breakdown;
     }
 }
