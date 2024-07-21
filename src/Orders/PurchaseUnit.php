@@ -23,7 +23,7 @@ class PurchaseUnit implements Arrayable, Jsonable
      *
      * @var AmountBreakdown
      */
-    protected AmountBreakdown $amount;
+    protected Amount $amount;
 
     /**
      * An array of items that the customer purchases from the merchant.
@@ -36,7 +36,7 @@ class PurchaseUnit implements Arrayable, Jsonable
     /**
      * Create a new collection.
      */
-    public function __construct(AmountBreakdown $amount)
+    public function __construct(Amount $amount)
     {
         $this->amount = $amount;
     }
@@ -110,13 +110,17 @@ class PurchaseUnit implements Arrayable, Jsonable
      */
     public function toArray(): array
     {
-        return [
+        $data = [
             'amount' => $this->amount->toArray(),
             'items' => array_map(
                 fn(Item $item) => $item->toArray(),
                 $this->items
-            ),
-            'shipping' => $this->shipping->toArray(),
+            )
         ];
+        if (!empty($this->shipping)) {
+            $data['shipping'] = $this->shipping->toArray();
+        }
+
+        return $data;
     }
 }
