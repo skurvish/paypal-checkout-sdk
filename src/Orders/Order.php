@@ -63,14 +63,6 @@ class Order implements Arrayable, Jsonable, ArrayAccess
     protected string $status;
 
     /**
-     * The order application context.
-     * https://developer.paypal.com/docs/api/orders/v2/#definition-order_application_context.
-     *
-     * @var ApplicationContext|null
-     */
-    protected ?ApplicationContext $application_context = null;
-
-    /**
      * The order payee.
      * https://developer.paypal.com/docs/api/orders/v2/#definition-payee.
      *
@@ -92,7 +84,6 @@ class Order implements Arrayable, Jsonable, ArrayAccess
     public function __construct(OrderIntent $intent = OrderIntent::CAPTURE)
     {
         $this->setIntent($intent);
-        $this->application_context = new ApplicationContext();
     }
 
     /**
@@ -116,27 +107,6 @@ class Order implements Arrayable, Jsonable, ArrayAccess
     public function getPurchaseUnits(): array
     {
         return $this->purchase_units;
-    }
-
-    /**
-     * return's order application context.
-     * @return ApplicationContext|null
-     */
-    public function getApplicationContext(): ?ApplicationContext
-    {
-        return $this->application_context;
-    }
-
-    /**
-     * set's order application context.
-     * @param  ApplicationContext  $application_context
-     * @return Order
-     */
-    public function setApplicationContext(ApplicationContext $application_context): self
-    {
-        $this->application_context = $application_context;
-
-        return $this;
     }
 
     /**
