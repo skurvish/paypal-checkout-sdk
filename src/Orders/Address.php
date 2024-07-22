@@ -117,13 +117,24 @@ class Address
     }
 
     /**
-     * {@inheritdoc}
+     * @param string $country_code          The two-letter country code.
      */
-    public function setCountryCode($country_code) 
+    public function setCountryCode($country_code): string
     {
-        // this call will throw an exception if the CC is invalid
-        ISO3166->alpha2($country_code);
-        $this->country_code = $country_code;
+        $ccLength = strlen($country_code);
+        // this call will throw an exception if the CC of the given length is invalid
+        switch (true) {
+            case $ccLength <= 2:
+                $data = (new ISO3166)->alpha2($country_code);
+                break;
+            case $ccLength = 3:
+                $data = (new ISO3166)->alpha3($country_code);
+                break;
+            case $ccLength > 3:
+                $data = (new ISO3166)->name($country_code);
+                break;
+        }
+        $this->country_code = $data['alpha2'];
     }
 
     /**
