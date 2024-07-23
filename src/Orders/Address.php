@@ -119,7 +119,7 @@ class Address
     /**
      * @param string $country_code          The two-letter country code.
      */
-    public function setCountryCode($country_code): string
+    public function setCountryCode($country_code)
     {
         $ccLength = strlen($country_code);
         // this call will throw an exception if the CC of the given length is invalid
