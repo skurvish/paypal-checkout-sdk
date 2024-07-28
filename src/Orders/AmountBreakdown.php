@@ -8,8 +8,23 @@ use Brick\Money\Money;
 /**
  * https://developer.paypal.com/docs/api/orders/v2/#definition-Amount_breakdown.
  */
-class AmountBreakdown 
+class AmountBreakdown
 {
+
+    /**
+     * The following maps the AmountBreadown get/set/has function names to the 
+     * PayPal AmountBreakdown properties. It also indicates whether the amount
+     * is added to the total or subtracted from the total
+     * **/
+    protected $breakDownItems = [
+        'ItemTotal'         => '+item_total', 
+        'Shipping'          => '+shipping', 
+        'Handling'          => '+handling', 
+        'TaxTotal'          => '+tax_total', 
+        'Insurance'         => '+insurance', 
+        'ShippingDiscount'  => '-shipping_discount', 
+        'Discount'          => '-discount',
+    ];
 
     /**
      * The subtotal for all items. Required if the request includes purchase_units[].items[].unit_amount.
@@ -71,15 +86,8 @@ class AmountBreakdown
         /**
          * The item breakdown elements, also how they affect the total cost
          **/
-        $breakDownItems = ['+item_total', '+shipping', '+handling', '+tax_total', '+insurance', '-shipping_discount', '-discount'];
-/*
-        $data = [
-            'currency_code' => $this->item_total->getCurrency()->getCurrencyCode(),
-            'value' => $this->item_total->getAmount(),
-        ];
-*/
         $data = [];
-        foreach ($breakDownItems as $breakDownItem) {
+        foreach ($this->breakDownItems as $breakDownItem) {
             $breakDownItem = ltrim($breakDownItem, '+-');
             if (empty($this->$breakDownItem)) {
                 continue;
@@ -209,19 +217,19 @@ class AmountBreakdown
 
     public function getAmountBreakdownTotal(): ?Money
     {
-        $total = Money::of(0,$this->getCurrencyCode());
+        $total = Money::of(0,$this->item_total->getCurrency()->getCurrencyCode());
 
-        foreach ($this->breakDownItems as $breakDownItem) {
+        foreach ($this->breakDownItems as $fn => $breakDownItem) {
             $op = $breakDownItem[0];
             $breakDownItem = ltrim($breakDownItem, '+-');
             if (empty($this->$breakDownItem)) {
                 continue;
             }
-            $getFn = 'get' . $breakDownItem;
+            $getFn = "get$fn";
             if ($op == '+') {
-                $total->plus($this->$getFn());
+                $total = $total->plus($this->$getFn());
             } else {
-                $total->minus($this->$getFn());
+                $total = $total->minus($this->$getFn());
             }
         }
         return $total;
