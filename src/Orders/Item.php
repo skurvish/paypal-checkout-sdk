@@ -238,4 +238,24 @@ class Item implements Arrayable//, Jsonable
 
         return $this;
     }
+
+    /**
+     * Validate the item.
+     * @return an array of errors which may be empty
+     */
+    public function validate(): ?array
+    {
+        $errors = [];
+        if (empty($this->getAmount())) {
+            $errors[] = "Item requires an amount";
+        }
+        if (empty($this->getName())) {
+            $errors[] = "Item requires a name";
+        }
+        if (empty($this->getQuantity())) {
+            $errors[] = "Item requires a quantity";
+        }
+
+        return array_filter($errors);
+    }
 }
