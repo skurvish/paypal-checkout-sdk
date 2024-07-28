@@ -82,7 +82,7 @@ class Amount implements AmountContract
     {
         return (string) $this->money->getAmount();
     }
-    
+
     public function setAmountBreakdown(AmountBreakdown $breakdown): self
     {
         $this->breakdown = $breakdown;
@@ -93,5 +93,33 @@ class Amount implements AmountContract
     public function getAmountBreakdown(): AmountBreakdown
     {
         return $this->breakdown;
+    }
+
+    /**
+     * Validate the amount.
+     * @return an array of errors which may be empty
+     */
+    public function validate(): ?array
+    {
+        $errors = [];
+        $money = $this->money;
+        if (empty($money)) {
+            $errors[] = "Amount requires an amount";
+        } else {
+            if (empty($this->getvalue())) {
+                $errors[] = "Amount has no value";
+            }
+            if (empty($this->getCurrencyCode())) {
+                $errors[] = "Amount currenty is missing";
+            }
+        }
+
+        if ($this->breakdown) {
+            if (!$money->isEqualTo($this->breakdown->getAmountBreakdownTotal())) {
+                $errors[] = "Purchase unit value of: " . $this->getValue() . " does not match the breakdown total of: " . $this->breakdown->getAmountBreakdownTotal();
+            }
+        }
+
+        return array_filter($errors);
     }
 }
