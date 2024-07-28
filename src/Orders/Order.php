@@ -249,4 +249,38 @@ class Order implements Arrayable, Jsonable, ArrayAccess
 
         return $this;
     }
+
+    /**
+     * Validate the order before sending to paypal.
+     * @return an array of errors which may be empty
+     */
+    public function validate(): ?array
+    {
+        $errors = [];
+        /* Validate that we have purchase units and they are valid */
+        $purchase_units = $this->getPurchaseUnits();
+        if (empty($purchase_units)) {
+            $errors[] = "There are no purchase units associated with this order";
+        } else {
+            foreach ($purchase_units as $purchase_unit) {
+                $errors = array_merge($errors, $purchase_unit->validate());
+            }
+        }
+        $intent = $this->getIntent();
+        if (empty($intent)) {
+            $errors[] = "Missing order intent";
+        } else {
+            if ($intent instanceof OrderIntent === false) {
+                 $errors[] = "Order Intent value of $intent is invalid.";
+            }
+        }
+        $payment_source = $this->getPaymentSource();
+        if (empty($payment_source)) {
+             $errors[] = "Missing order payment source";
+        } else {
+            $errors = array_merge($errors, $payment_source->validate());
+        }
+
+        return array_filter($errors);
+    }
 }
