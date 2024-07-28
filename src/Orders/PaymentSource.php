@@ -41,4 +41,20 @@ class PaymentSource implements Arrayable, Jsonable
     {
         return !empty($this->paypal) ? ['paypal' => ['experience_context' => $this->paypal->toArray()]] : [];
     }
+
+    /**
+     * Validate the payment source.
+     * @return an array of errors which may be empty
+     */
+    public function validate(): ?array
+    {
+        $errors = [];
+        if (empty($this->paypal)) {
+            $errors[] = "PayPal payment source is required";
+        } else {
+            $errors = array_merge($errors, $this->paypal->validate());
+       }
+
+        return array_filter($errors);
+    }
 }
