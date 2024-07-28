@@ -21,7 +21,7 @@ class PurchaseUnit implements Arrayable, Jsonable
      * such as the total item Amount, total tax Amount, shipping, handling, insurance,
      * and discounts, if any.
      *
-     * @var AmountBreakdown
+     * @var Amount
      */
     protected Amount $amount;
 
@@ -99,9 +99,19 @@ class PurchaseUnit implements Arrayable, Jsonable
      * return's the purchase unit amount breakdown.
      * @return AmountBreakdown
      */
-    public function getAmount(): AmountBreakdown
+    public function getAmount(): Amount
     {
         return $this->amount;
+    }
+
+    public function getTotalItemsAmount(): Amount 
+    {
+        $totalAmount = 0;
+        foreach($this->items as $item) {
+            $totalAmount += $item->getAmount()->getValue() * $item->getQuantity();
+        }
+
+        return new Amount($totalAmount, $this->amount->getCurrencyCode());
     }
 
     /**
@@ -122,5 +132,38 @@ class PurchaseUnit implements Arrayable, Jsonable
         }
 
         return $data;
+    }
+    /**
+     * Validate the purchase unit.
+     * @return an array of errors which may be empty
+     */
+    public function validate(): ?array
+    {
+        $errors = [];
+        $amount = $this->getAmount();
+        if (empty($amount)) {
+            $errors[] = "Missing amount for purchase unit.";
+        } else {
+            $errors = array_merge($errors, $amount->validate());
+        }
+        if (!empty($this->shipping)) {
+            $errors = array_merge($errors, $this->shipping->validate());
+        }
+        if (empty($this->items)) {
+            $errors[] = "Purchase unit must have at least one item";
+        } else {
+            foreach ($this->items as $item) {
+                $errors = array_merge($errors, $item->validate());
+            }
+        }
+
+        $totalItemsAmount = $this->getTotalItemsAmount();
+        if ($amount && $totalItemsAmount) {
+            if ($amount->getValue() != $totalItemsAmount->getValue()) {
+                $errors[] = "Total Items Amount of " . $totalItemsAmount->getValue() . " does not equal the purchaseUnit amount of " . $amount->getValue();
+            }
+        }
+
+        return array_filter($errors);
     }
 }
