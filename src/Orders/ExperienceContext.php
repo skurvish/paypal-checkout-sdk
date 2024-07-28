@@ -197,4 +197,29 @@ class ExperienceContext implements Arrayable, Jsonable
         return $this;
     }
 
+    /**
+     * Validate the experience context.
+     * @return an array of errors which may be empty
+     */
+    public function validate(): ?array
+    {
+        $errors = [];
+        if (empty($this->user_action) || $this->user_action instanceof UserAction === false) {
+            $errors[] = "Missing or invalid user action in Experience Context";
+        }
+        if (empty($this->payment_method_preference) || $this->payment_method_preference instanceof PaymentMethod === false) {
+            $errors[] = "Missing or invalid payment method preference in Experience Context";
+        }
+        if (empty($this->landing_page) || $this->landing_page instanceof LandingPage === false) {
+            $errors[] = "Missing or invalid landing page in Experience Context";
+        }
+        if (empty($this->shipping_preference) || $this->shipping_preference instanceof ShippingPreference === false) {
+            $errors[] = "Missing or invalid shipping preference in Experience Context";
+        }
+        if (empty($this->return_url)) {
+            $errors[] = "Missing return URL in Experience Context";
+        }
+
+        return array_filter($errors);
+    }
 }
